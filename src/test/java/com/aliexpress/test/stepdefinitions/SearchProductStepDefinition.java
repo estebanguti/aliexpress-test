@@ -3,12 +3,16 @@ package com.aliexpress.test.stepdefinitions;
 import com.aliexpress.test.pages.MainPage;
 import com.aliexpress.test.pages.ProductPage;
 import com.aliexpress.test.pages.ResultPage;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.testng.Assert;
+
+import java.util.ArrayList;
 
 public class SearchProductStepDefinition {
 
@@ -18,6 +22,8 @@ public class SearchProductStepDefinition {
     private ResultPage resultPage;
     @Autowired
     private ProductPage productPage;
+    @Autowired
+    private WebDriver driver;
     @Value("${base.url}")
     private String url;
 
@@ -29,19 +35,26 @@ public class SearchProductStepDefinition {
 
     @When("The customer search the next product {string}")
     public void theCustomerSearchTheNextProduct(String searchKey) {
-        mainPage.searchProduct(searchKey);
+        mainPage.getHeaderComponent().searchProduct(searchKey);
         Assert.assertTrue(resultPage.isLoaded());
     }
 
     @When("The customer clicks on product {int}")
     public void theCustomerClickOnProduct(Integer product) {
         resultPage.openProduct(product);
+        ArrayList<String> tabs = new ArrayList<> (driver.getWindowHandles());
+        driver.switchTo().window(tabs.get(1));
         Assert.assertTrue(productPage.isLoaded());
     }
 
     @Then("The product should contain available items to buy")
     public void theProductShouldContainAvailableItemsToBuy() {
         Assert.assertTrue(productPage.getQuantityProductsAvailable() > 0);
+    }
+
+    @After
+    public void after() {
+        driver.close();
     }
 
 }
