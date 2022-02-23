@@ -22,7 +22,8 @@ public class MainPage extends BasePage {
 
     @Override
     public boolean isLoaded() {
-        return wait.until((d) -> this.categories.isDisplayed());
+        return wait.until((d) -> this.categories.isDisplayed()
+                & this.headerComponent.isLoaded());
     }
 
 }

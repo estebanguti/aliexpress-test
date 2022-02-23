@@ -22,4 +22,5 @@ public class HeaderComponent extends BasePage {
     public boolean isLoaded() {
         return wait.until((d) -> this.searchInput.isDisplayed());
     }
+
 }
