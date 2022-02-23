@@ -3,6 +3,7 @@ package com.aliexpress.test.stepdefinitions;
 import com.aliexpress.test.pages.MainPage;
 import com.aliexpress.test.pages.ProductPage;
 import com.aliexpress.test.pages.ResultPage;
+import com.aliexpress.test.utils.WebDriverHelper;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -24,6 +25,8 @@ public class SearchProductStepDefinition {
     private ProductPage productPage;
     @Autowired
     private WebDriver driver;
+    @Autowired
+    private WebDriverHelper webDriverHelper;
     @Value("${base.url}")
     private String url;
 
@@ -37,6 +40,12 @@ public class SearchProductStepDefinition {
     public void theCustomerSearchTheNextProduct(String searchKey) {
         mainPage.getHeaderComponent().searchProduct(searchKey);
         Assert.assertTrue(resultPage.isLoaded());
+    }
+
+    @When("The customer goes to Result Page {int}")
+    public void theCustomerSearchTheNextProduct(Integer page) {
+        webDriverHelper.scrollUntilVisibleElement(resultPage.getPagination().getBody());
+        resultPage.getPagination().nextToPage(page);
     }
 
     @When("The customer clicks on product {int}")
@@ -54,7 +63,7 @@ public class SearchProductStepDefinition {
 
     @After
     public void after() {
-        driver.close();
+        driver.quit();
     }
 
 }
